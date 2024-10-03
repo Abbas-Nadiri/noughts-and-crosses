@@ -28,8 +28,8 @@ const createPlayerFactory = (function() {
 
 
 function playGame() {
-    const player1 = createPlayer(prompt("Enter player 1: "));
-    const player2 = createPlayer(prompt("Enter player 2: "));
+    const player1 = createPlayerFactory(prompt("Enter player 1: "));
+    const player2 = createPlayerFactory(prompt("Enter player 2: "));
     console.log(player1, player2);
     console.log(Gameboard.getBoard());
 };
