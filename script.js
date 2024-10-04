@@ -3,6 +3,9 @@ const Gameboard = (function() {
     return {
         getBoard: function() {
             return board;
+        },
+        makeMove: function(symbol, position) {
+            board.splice(position - 1, 1, symbol);
         }
         /*add methods for mutating board array elements i.e. putting in Xs and Os*/
     };
@@ -25,13 +28,28 @@ const createPlayerFactory = (function() {
     };
 })();
 
-
-
 function playGame() {
-    const player1 = createPlayerFactory(prompt("Enter player 1: "));
-    const player2 = createPlayerFactory(prompt("Enter player 2: "));
+    const player1 = createPlayerFactory("One");
+    const player2 = createPlayerFactory("Two");
     console.log(player1, player2);
     console.log(Gameboard.getBoard());
+
+    let loop = true;
+    counter = 0;
+    while (loop == true) {
+        currentTurn = null;
+        if (counter % 2 == 0) {
+            currentTurn = player1;
+        } else if (counter % 2 == 1) {
+            currentTurn = player2;
+        }
+        Gameboard.makeMove(currentTurn.symbol, prompt(`Player ${currentTurn.name}, enter your move (1-9):`));
+        console.log(Gameboard.getBoard());
+        counter++;
+
+        if (!(Gameboard.getBoard().includes(null)))
+            loop = false;
+    };
 };
 
 playGame();
