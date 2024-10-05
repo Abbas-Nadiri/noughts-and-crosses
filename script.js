@@ -6,8 +6,10 @@ const Gameboard = (function() {
         },
         makeMove: function(symbol, position) {
             board.splice(position - 1, 1, symbol);
+        },
+        checkPosition: function(position) {
+            return board[position - 1];
         }
-        /*add methods for mutating board array elements i.e. putting in Xs and Os*/
     };
 })();
 
@@ -42,15 +44,28 @@ function playGame() {
             currentTurn = player1;
         } else if (counter % 2 == 1) {
             currentTurn = player2;
+        };
+
+        let condition = true;
+        while (condition == true) {
+            let move = prompt(`Player ${currentTurn.name}, enter your move (1-9):`);
+            if (Gameboard.checkPosition(move) === null) {
+                Gameboard.makeMove(currentTurn.symbol, move);
+                break;
+            } else {
+                alert("Invalid choice. Try again.");
+            };
         }
-        Gameboard.makeMove(currentTurn.symbol, prompt(`Player ${currentTurn.name}, enter your move (1-9):`));
-        console.log(Gameboard.getBoard());
+        for (let i = 0; i < 9; i += 3){
+            console.log(Gameboard.getBoard().slice(i, i + 3));
+        }
+        console.log(" ");
         counter++;
 
-        if (!(Gameboard.getBoard().includes(null)))
+        if (!(Gameboard.getBoard().includes(null))) {
             loop = false;
+        }
     };
 };
 
 playGame();
-
