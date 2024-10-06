@@ -9,6 +9,21 @@ const Gameboard = (function() {
         },
         checkPosition: function(position) {
             return board[position - 1];
+        },
+        winCondition: function() {
+            if (board[0] == board[1] && board[1] == board[2] && board[2] != null ||
+                board[3] == board[4] && board[4] == board[5] && board[5] != null ||
+                board[6] == board[7] && board[7] == board[8] && board[8] != null ||
+                board[0] == board[3] && board[3] == board[6] && board[6] != null ||
+                board[1] == board[4] && board[4] == board[7] && board[7] != null ||
+                board[2] == board[5] && board[5] == board[8] && board[8] != null ||
+                board[0] == board[4] && board[4] == board[8] && board[8] != null ||
+                board[2] == board[4] && board[4] == board[6] && board[6] != null
+            ) {
+                return true;
+            } else {
+                return false;
+            }
         }
     };
 })();
@@ -60,11 +75,15 @@ function playGame() {
             console.log(Gameboard.getBoard().slice(i, i + 3));
         }
         console.log(" ");
-        counter++;
-
-        if (!(Gameboard.getBoard().includes(null))) {
+        
+        if (!(Gameboard.getBoard().includes(null)) && Gameboard.winCondition() == false) {
             loop = false;
+            console.log("Draw!")
+        } else if (Gameboard.winCondition() == true) {
+            loop = false;
+            console.log(`${currentTurn.name} wins!`)
         }
+        counter++;
     };
 };
 
