@@ -72,6 +72,7 @@ const displayController = (function() {
                         if (Gameboard.winCondition()) {
                             textBox.textContent = `${currentTurn.name} wins!`;
                             activeGame = false;
+                            container.setAttribute("style", "animation: borderColorChange 0.5s infinite;");
                         } else if (!Gameboard.getBoard().includes(null) && !Gameboard.winCondition()) {
                             textBox.textContent = "It's a draw.";
                             activeGame = false;
