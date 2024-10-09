@@ -5,10 +5,13 @@ const Gameboard = (function() {
             return board;
         },
         makeMove: function(symbol, position) {
-            board.splice(position - 1, 1, symbol);
+            if (board[position] == null) {
+                board.splice(position, 1, symbol);
+            }
+
         },
         checkPosition: function(position) {
-            return board[position - 1];
+            return board[position];
         },
         winCondition: function() {
             if (board[0] == board[1] && board[1] == board[2] && board[2] != null ||
@@ -28,6 +31,8 @@ const Gameboard = (function() {
     };
 })();
 
+
+
 const createPlayerFactory = (function() {
     let counter = 0;
     return function Player(name) {
@@ -45,46 +50,68 @@ const createPlayerFactory = (function() {
     };
 })();
 
-function playGame() {
-    const player1 = createPlayerFactory("One");
-    const player2 = createPlayerFactory("Two");
-    console.log(player1, player2);
-    console.log(Gameboard.getBoard());
 
-    let loop = true;
-    counter = 0;
-    while (loop == true) {
-        currentTurn = null;
-        if (counter % 2 == 0) {
-            currentTurn = player1;
-        } else if (counter % 2 == 1) {
-            currentTurn = player2;
-        };
+const displayController = (function() {
+    const container = document.getElementById("container");
+    const textBox = document.getElementById("textBox");
+    gridArray = [];
+    let currentTurn = null;
+    activeGame = true;
 
-        let condition = true;
-        while (condition == true) {
-            let move = prompt(`Player ${currentTurn.name}, enter your move (1-9):`);
-            if (Gameboard.checkPosition(move) === null) {
-                Gameboard.makeMove(currentTurn.symbol, move);
-                break;
-            } else {
-                alert("Invalid choice. Try again.");
+    return {
+        createGrid: function(player1, player2) {
+            for (let i = 0; i < 9; i++) {
+                const gridSquare = document.createElement("div");
+
+                gridSquare.addEventListener("click", () => {
+                    if (Gameboard.checkPosition(i) == null && activeGame){
+
+                        Gameboard.makeMove(currentTurn.symbol, i);
+                        displayController.updateDisplay();
+
+                        if (Gameboard.winCondition()) {
+                            textBox.textContent = `${currentTurn.name} wins!`;
+                            activeGame = false;
+                        } else if (!Gameboard.getBoard().includes(null) && !Gameboard.winCondition()) {
+                            textBox.textContent = "It's a draw.";
+                            activeGame = false;
+                        } else {
+                            currentTurn = currentTurn === player1 ? player2 : player1;
+                            textBox.textContent = `It's ${currentTurn.name}'s turn.`;
+                        };
+                    };
+                });
+
+                gridSquare.textContent = Gameboard.getBoard()[i];
+                gridArray.push(gridSquare);
+                container.append(gridSquare);
             };
+        },
+        updateDisplay: function() {
+            for (let i = 0; i < 9; i++) {
+                gridArray[i].textContent = Gameboard.getBoard()[i];
+            };
+        },
+        getGridArray: function() {
+            return gridArray;
+        },
+        setInitialTurn: function(player) {
+            currentTurn = player;
+            textBox.textContent = `It's ${currentTurn.name}'s turn.`;
         }
-        for (let i = 0; i < 9; i += 3){
-            console.log(Gameboard.getBoard().slice(i, i + 3));
-        }
-        console.log(" ");
-        
-        if (!(Gameboard.getBoard().includes(null)) && Gameboard.winCondition() == false) {
-            loop = false;
-            console.log("Draw!")
-        } else if (Gameboard.winCondition() == true) {
-            loop = false;
-            console.log(`${currentTurn.name} wins!`)
-        }
-        counter++;
     };
+})();
+
+function playGame() {
+    const player1 = createPlayerFactory("X");
+    const player2 = createPlayerFactory("O");
+
+    let counter = Math.random() < 0.5 ? 0 : 1;
+    const startingPlayer = counter % 2 === 0 ? player1 : player2;
+
+    displayController.setInitialTurn(startingPlayer);
+    displayController.createGrid(player1, player2);
 };
 
 playGame();
+
