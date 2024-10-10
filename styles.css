@@ -40,7 +40,7 @@ div>div {
     cursor: pointer;
 }
 
-.reset-button {
+#reset-button {
     border-radius: 0;
     height: 40px;
     width: 120px;
