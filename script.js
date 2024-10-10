@@ -27,10 +27,12 @@ const Gameboard = (function() {
             } else {
                 return false;
             }
+        },
+        resetBoard: function() {
+            board = Array(9).fill(null);
         }
     };
 })();
-
 
 
 const createPlayerFactory = (function() {
@@ -59,7 +61,7 @@ const displayController = (function() {
     activeGame = true;
 
     return {
-        createGrid: function(player1, player2) {
+        playGame: function(player1, player2) {
             for (let i = 0; i < 9; i++) {
                 const gridSquare = document.createElement("div");
 
@@ -67,7 +69,7 @@ const displayController = (function() {
                     if (Gameboard.checkPosition(i) == null && activeGame){
 
                         Gameboard.makeMove(currentTurn.symbol, i);
-                        displayController.updateDisplay();
+                        this.updateDisplay();
 
                         if (Gameboard.winCondition()) {
                             textBox.textContent = `${currentTurn.name} wins!`;
@@ -99,11 +101,19 @@ const displayController = (function() {
         setInitialTurn: function(player) {
             currentTurn = player;
             textBox.textContent = `It's ${currentTurn.name}'s turn.`;
+        },
+        resetGame: function() {
+            Gameboard.resetBoard();
+            activeGame = true;
+            container.setAttribute("style", "border: 5px solid white");
+            this.updateDisplay();
+            textBox.textContent = `It's ${currentTurn.name}'s turn.`;
         }
     };
 })();
 
-function playGame() {
+
+function initialiseGame() {
     const player1 = createPlayerFactory("X");
     const player2 = createPlayerFactory("O");
 
@@ -111,8 +121,13 @@ function playGame() {
     const startingPlayer = counter % 2 === 0 ? player1 : player2;
 
     displayController.setInitialTurn(startingPlayer);
-    displayController.createGrid(player1, player2);
+    displayController.playGame(player1, player2);
+
+    let resetButton = document.getElementById("reset-button");
+resetButton.addEventListener("click", () => {
+    displayController.resetGame();
+});
 };
 
-playGame();
+initialiseGame();
 
